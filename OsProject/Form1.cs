@@ -148,7 +148,7 @@ namespace OsProject
             
         }
 
-        #region My Mithods
+        #region Abdulrhman Nofal's Mithods
         private void ItemInfo<T>(T item) where T : FileSystemInfo
         {
             FileNameLable.Text = item.Name;
