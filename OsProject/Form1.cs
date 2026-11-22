@@ -145,7 +145,7 @@ namespace OsProject
                 }
                 RunInThread(() => CopyOrMoveFile(sourcePath, destPath, isMove));
             }
-            
+
         }
 
         #region Abdulrhman Nofal's Mithods
@@ -356,5 +356,143 @@ namespace OsProject
             }
         }
         #endregion
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            StartSearch();
+        }
+
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true; // Prevents adding a new line (textBox1 is Multiline)
+                StartSearch();
+            }
+        }
+        private void StartSearch()
+        {
+            string searchText = textBox1.Text.Trim();
+
+            // If the search box is empty, restore whatever view the user is currently on
+            if (string.IsNullOrEmpty(searchText))
+            {
+                if (CurrentFolderPath == "This PC")
+                {
+                    CurrentFolderPath = ViewThisPC();
+                    SelectedItemPath = "";
+                }
+                else if (Directory.Exists(CurrentFolderPath))
+                {
+                    LoadDirectory(CurrentFolderPath);
+                }
+                return;
+            }
+
+            // Decide what paths to search: all ready drives if on "This PC", otherwise just the current folder
+            string[] pathsToSearch;
+
+            if (CurrentFolderPath == "This PC")
+            {
+                pathsToSearch = DriveInfo.GetDrives()
+                    .Where(d => d.IsReady)
+                    .Select(d => d.Name)
+                    .ToArray();
+            }
+            else if (Directory.Exists(CurrentFolderPath))
+            {
+                pathsToSearch = [CurrentFolderPath];
+            }
+            else
+            {
+                MessageBox.Show("Invalid folder path.");
+                return;
+            }
+
+            // Run the search on a background thread so the UI stays responsive
+            RunInThread(() => SearchFiles(pathsToSearch, searchText));
+        }
+
+        private void SearchFiles(string[] pathsToSearch, string searchText)
+        {
+            try
+            {
+                UpdateProgress($"Searching for {searchText}...", 0);
+
+                // Search all subfolders automatically and skip protected Windows/system folders
+                EnumerationOptions options = new()
+                {
+                    RecurseSubdirectories = true,
+                    IgnoreInaccessible = true,
+                    MatchCasing = MatchCasing.CaseInsensitive
+                };
+
+                List<FileInfo> foundFiles = [];
+
+                // Loop through each drive (for "This PC") or the single open folder
+                for (int i = 0; i < pathsToSearch.Length; i++)
+                {
+                    string path = pathsToSearch[i];
+                    UpdateProgress($"Searching in {path} for {searchText}...", (i * 90) / pathsToSearch.Length);
+
+                    try
+                    {
+                        DirectoryInfo dir = new(path);
+                        foundFiles.AddRange(dir.GetFiles($"*{searchText}*", options));
+                    }
+                    catch (Exception)
+                    {
+                        // Skip a drive/folder if it becomes unavailable mid-search
+                    }
+
+                    int percent = ((i + 1) * 90) / pathsToSearch.Length;
+                    UpdateProgress($"Searching for {searchText}...", percent);
+                }
+
+                // Case 1: No matching files found anywhere
+                if (foundFiles.Count == 0)
+                {
+                    UpdateProgress("File not found", 0);
+                    AddLog($"({searchText}) File not found", Color.Red);
+
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        MessageBox.Show("File not found.");
+                    }));
+                    return;
+                }
+
+                // Case 2: Display the matching files in the table on the UI thread
+                this.BeginInvoke(new Action(() =>
+                {
+                    dataGridView1.Rows.Clear();
+                    SelectedItemPath = "";
+
+                    foreach (FileInfo file in foundFiles)
+                    {
+                        dataGridView1.Rows.Add(
+                            file.Name,
+                            "File",
+                            Math.Round(file.Length / 1024.0, 3) + " kB",
+                            file.LastWriteTime
+                        );
+                        // Store full path in Tag so clicking or opening the result works
+                        dataGridView1.Rows[^1].Tag = file.FullName;
+                    }
+                }));
+
+                UpdateProgress($"Search completed ({foundFiles.Count} found)", 100);
+                AddLog($"Search ({searchText}): {foundFiles.Count} file(s) found", Color.Green);
+                UpdateStats("Search");
+            }
+            catch (Exception ex)
+            {
+                UpdateProgress("Search failed", 0);
+                AddLog($"Error searching ({searchText}): {ex.Message}", Color.Red);
+            }
+        }
+
+
     }
 }
