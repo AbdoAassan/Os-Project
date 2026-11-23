@@ -661,6 +661,7 @@
             button7.TabIndex = 10;
             button7.Text = "📄 Write File";
             button7.UseVisualStyleBackColor = false;
+            button7.Click += button7_Click;
             // 
             // button6
             // 
@@ -708,6 +709,7 @@
             button4.TabIndex = 7;
             button4.Text = "🗃️ Read File";
             button4.UseVisualStyleBackColor = false;
+            button4.Click += button4_Click;
             // 
             // button3
             // 

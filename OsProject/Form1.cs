@@ -357,6 +357,7 @@ namespace OsProject
         }
         #endregion
 
+        #region Elnaggar
         private void button6_Click(object sender, EventArgs e)
         {
             StartSearch();
@@ -367,7 +368,7 @@ namespace OsProject
         {
             if (e.KeyCode == Keys.Enter)
             {
-                e.SuppressKeyPress = true; // Prevents adding a new line (textBox1 is Multiline)
+                e.SuppressKeyPress = true; // Prevents adding a new line
                 StartSearch();
             }
         }
@@ -375,7 +376,7 @@ namespace OsProject
         {
             string searchText = textBox1.Text.Trim();
 
-            // If the search box is empty, restore whatever view the user is currently on
+            // If the search box is empty
             if (string.IsNullOrEmpty(searchText))
             {
                 if (CurrentFolderPath == "This PC")
@@ -410,7 +411,7 @@ namespace OsProject
                 return;
             }
 
-            // Run the search on a background thread so the UI stays responsive
+            // Run the search on a background thread
             RunInThread(() => SearchFiles(pathsToSearch, searchText));
         }
 
@@ -430,7 +431,7 @@ namespace OsProject
 
                 List<FileInfo> foundFiles = [];
 
-                // Loop through each drive (for "This PC") or the single open folder
+                // Loop through each drive 
                 for (int i = 0; i < pathsToSearch.Length; i++)
                 {
                     string path = pathsToSearch[i];
@@ -450,7 +451,7 @@ namespace OsProject
                     UpdateProgress($"Searching for {searchText}...", percent);
                 }
 
-                // Case 1: No matching files found anywhere
+                // No matching files found anywhere
                 if (foundFiles.Count == 0)
                 {
                     UpdateProgress("File not found", 0);
@@ -463,7 +464,7 @@ namespace OsProject
                     return;
                 }
 
-                // Case 2: Display the matching files in the table on the UI thread
+                // Display the matching files in the table on the UI thread
                 this.BeginInvoke(new Action(() =>
                 {
                     dataGridView1.Rows.Clear();
@@ -493,6 +494,185 @@ namespace OsProject
             }
         }
 
+        
+
+        // opens .txt files in Notepad, and any other file extension in its Windows default app
+        private System.Diagnostics.Process? OpenWithApp(string filePath)
+        {
+            bool isTxt = Path.GetExtension(filePath).Equals(".txt", StringComparison.OrdinalIgnoreCase);
+
+            if (isTxt)
+            {
+                return System.Diagnostics.Process.Start("notepad.exe", $"\"{filePath}\"");
+            }
+
+            return System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = filePath,
+                UseShellExecute = true
+            });
+        }
+
+        // read file
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(SelectedItemPath) || !File.Exists(SelectedItemPath))
+            {
+                MessageBox.Show("Please select a file to read first.");
+                return;
+            }
+
+            string filePath = SelectedItemPath;
+            string fileName = Path.GetFileName(filePath);
+            bool isTxt = Path.GetExtension(filePath).Equals(".txt", StringComparison.OrdinalIgnoreCase);
+
+            RunInThread(() =>
+            {
+                try
+                {
+                    if (isTxt)
+                    {
+                        // for txt files read lines on the background thread log steps then open in Notepad
+                        bool readSuccess = ReadTextFile(filePath);
+                        if (!readSuccess) return;
+
+                        AddLog($"Opening ({fileName}) in Notepad...", Color.Blue);
+                        using var proc = OpenWithApp(filePath);
+                    }
+                    else
+                    {
+                        // For non txt files: skip StreamReader and launch the default app directly
+                        string ext = Path.GetExtension(filePath);
+                        UpdateProgress($"Opening {fileName}...", 50);
+                        AddLog($"Step 1: Launching default app for ({fileName}) [{ext}]", Color.Blue);
+
+                        using var proc = OpenWithApp(filePath);
+
+                        UpdateProgress($"Opened ({fileName})", 100);
+                        AddLog($"Step 2: ({fileName}) opened with default application", Color.Green);
+                    }
+
+                    UpdateStats("Read");
+                }
+                catch (Exception ex)
+                {
+                    UpdateProgress("Read failed", 0);
+                    AddLog($"Error opening ({fileName}): {ex.Message}", Color.Red);
+                }
+            });
+        }
+
+        private bool ReadTextFile(string filePath)
+        {
+            string fileName = Path.GetFileName(filePath);
+
+            try
+            {
+                UpdateProgress($"Opening {fileName}...", 0);
+                AddLog($"Step 1: Starting to read ({fileName})", Color.Blue);
+
+                int lineCount = 0;
+
+                using (FileStream fs = new(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (StreamReader reader = new(fs))
+                {
+                    long totalBytes = fs.Length;
+                    int lastPercent = 0;
+
+                    AddLog($"Step 2: Reading content from ({fileName})...", Color.DarkSlateGray);
+
+                    while (reader.ReadLine() != null)
+                    {
+                        lineCount++;
+
+                        if (totalBytes > 0)
+                        {
+                            int percent = (int)((fs.Position * 100) / totalBytes);
+                            if (percent > lastPercent)
+                            {
+                                lastPercent = percent;
+                                UpdateProgress($"Reading {fileName}...", percent);
+                            }
+                        }
+                    }
+                }
+
+                UpdateProgress($"Read completed ({fileName})", 100);
+                AddLog($"Step 3: Finished reading ({fileName}) - {lineCount} line(s)", Color.Green);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                UpdateProgress("Read failed", 0);
+                AddLog($"Error reading ({fileName}): {ex.Message}", Color.Red);
+                return false;
+            }
+        }
+
+        // write file
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(SelectedItemPath) || !File.Exists(SelectedItemPath))
+            {
+                MessageBox.Show("Please select a file to write to first.");
+                return;
+            }
+
+            string filePath = SelectedItemPath;
+            string fileName = Path.GetFileName(filePath);
+
+            RunInThread(() => WriteFileWithApp(filePath, fileName));
+        }
+
+        private void WriteFileWithApp(string filePath, string fileName)
+        {
+            bool isTxt = Path.GetExtension(filePath).Equals(".txt", StringComparison.OrdinalIgnoreCase);
+            string appLabel = isTxt ? "Notepad" : "default app";
+
+            try
+            {
+                // launch Notepad or the OS default app (other extensions)
+                UpdateProgress($"Opening {fileName} in {appLabel}...", 30);
+                AddLog($"Step 1: Launching {appLabel} to edit ({fileName})", Color.Blue);
+
+                using var proc = OpenWithApp(filePath);
+
+                // wait for the launched process to close 
+                UpdateProgress($"Editing {fileName} in {appLabel}...", 60);
+                AddLog($"Step 2: Waiting for edits to ({fileName}) to finish...", Color.DarkSlateGray);
+
+                proc?.WaitForExit();
+
+                //  log completion and update operation stats
+                UpdateProgress($"Finished editing ({fileName})", 100);
+                AddLog($"Step 3: Finished editing ({fileName})", Color.Green);
+                UpdateStats("Write");
+
+                // Refresh the table and File Details panel on the UI thread to reflect any size/date changes
+                this.BeginInvoke(new Action(() =>
+                {
+                    if (CurrentFolderPath != "This PC" && Directory.Exists(CurrentFolderPath))
+                    {
+                        LoadDirectory(CurrentFolderPath);
+                    }
+                    if (File.Exists(filePath))
+                    {
+                        SelectedItemPath = filePath;
+                        ItemInfo(new FileInfo(filePath));
+                    }
+                }));
+            }
+            catch (Exception ex)
+            {
+                UpdateProgress("Write failed", 0);
+                AddLog($"Error editing ({fileName}): {ex.Message}", Color.Red);
+            }
+        }
+
+        #endregion
 
     }
+
 }
