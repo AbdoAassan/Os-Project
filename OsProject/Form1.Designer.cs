@@ -167,11 +167,11 @@
             // LocalDiscCLabel
             // 
             LocalDiscCLabel.AutoSize = true;
-            LocalDiscCLabel.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            LocalDiscCLabel.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             LocalDiscCLabel.ForeColor = Color.Black;
             LocalDiscCLabel.Location = new Point(34, 333);
             LocalDiscCLabel.Name = "LocalDiscCLabel";
-            LocalDiscCLabel.Size = new Size(205, 27);
+            LocalDiscCLabel.Size = new Size(218, 29);
             LocalDiscCLabel.TabIndex = 11;
             LocalDiscCLabel.Text = "💾 Local Disk (C:)";
             LocalDiscCLabel.Click += LocalDiscCLabel_Click;
@@ -179,11 +179,11 @@
             // VideosLabel
             // 
             VideosLabel.AutoSize = true;
-            VideosLabel.Font = new Font("Century Gothic", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            VideosLabel.Font = new Font("Microsoft Sans Serif", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
             VideosLabel.ForeColor = Color.Black;
             VideosLabel.Location = new Point(22, 271);
             VideosLabel.Name = "VideosLabel";
-            VideosLabel.Size = new Size(212, 49);
+            VideosLabel.Size = new Size(197, 46);
             VideosLabel.TabIndex = 10;
             VideosLabel.Text = "🎬 Videos";
             VideosLabel.Click += VideosLabel_Click;
@@ -191,11 +191,11 @@
             // DocumentsLabel
             // 
             DocumentsLabel.AutoSize = true;
-            DocumentsLabel.Font = new Font("Century Gothic", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            DocumentsLabel.Font = new Font("Microsoft Sans Serif", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             DocumentsLabel.ForeColor = Color.Black;
             DocumentsLabel.Location = new Point(29, 134);
             DocumentsLabel.Name = "DocumentsLabel";
-            DocumentsLabel.Size = new Size(226, 37);
+            DocumentsLabel.Size = new Size(219, 36);
             DocumentsLabel.TabIndex = 9;
             DocumentsLabel.Text = "📄 Documents";
             DocumentsLabel.Click += DocumentsLabel_Click;
@@ -203,11 +203,11 @@
             // PicturesLabel
             // 
             PicturesLabel.AutoSize = true;
-            PicturesLabel.Font = new Font("Century Gothic", 22.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            PicturesLabel.Font = new Font("Microsoft Sans Serif", 22.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             PicturesLabel.ForeColor = Color.Black;
             PicturesLabel.Location = new Point(29, 178);
             PicturesLabel.Name = "PicturesLabel";
-            PicturesLabel.Size = new Size(210, 44);
+            PicturesLabel.Size = new Size(206, 42);
             PicturesLabel.TabIndex = 8;
             PicturesLabel.Text = "🖼️ Pictures";
             PicturesLabel.Click += PicturesLabel_Click;
@@ -215,11 +215,11 @@
             // MusicLabel
             // 
             MusicLabel.AutoSize = true;
-            MusicLabel.Font = new Font("Century Gothic", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            MusicLabel.Font = new Font("Microsoft Sans Serif", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
             MusicLabel.ForeColor = Color.Black;
             MusicLabel.Location = new Point(22, 222);
             MusicLabel.Name = "MusicLabel";
-            MusicLabel.Size = new Size(193, 49);
+            MusicLabel.Size = new Size(179, 46);
             MusicLabel.TabIndex = 7;
             MusicLabel.Text = "🎵 Music";
             MusicLabel.Click += MusicLabel_Click;
@@ -227,11 +227,11 @@
             // ThisPCLabel
             // 
             ThisPCLabel.AutoSize = true;
-            ThisPCLabel.Font = new Font("Century Gothic", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            ThisPCLabel.Font = new Font("Microsoft Sans Serif", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
             ThisPCLabel.ForeColor = Color.Black;
             ThisPCLabel.Location = new Point(22, 77);
             ThisPCLabel.Name = "ThisPCLabel";
-            ThisPCLabel.Size = new Size(207, 49);
+            ThisPCLabel.Size = new Size(208, 46);
             ThisPCLabel.TabIndex = 5;
             ThisPCLabel.Text = "🖥️ This Pc";
             ThisPCLabel.Click += ThisPCLabel_Click;
@@ -621,6 +621,7 @@
             button7.TabIndex = 10;
             button7.Text = "📄 Write File";
             button7.UseVisualStyleBackColor = false;
+            button7.Click += button7_Click;
             // 
             // button6
             // 
@@ -635,6 +636,7 @@
             button6.TabIndex = 9;
             button6.Text = "🔍 Search Files";
             button6.UseVisualStyleBackColor = false;
+            button6.Click += button6_Click;
             // 
             // button5
             // 
@@ -664,6 +666,7 @@
             button4.TabIndex = 7;
             button4.Text = "🗃️ Read File";
             button4.UseVisualStyleBackColor = false;
+            button4.Click += button4_Click;
             // 
             // button3
             // 
@@ -794,6 +797,7 @@
             textBox1.PlaceholderText = " Search Files...";
             textBox1.Size = new Size(344, 35);
             textBox1.TabIndex = 9;
+            textBox1.KeyDown += textBox1_KeyDown;
             // 
             // Searchlabel
             // 
@@ -846,7 +850,7 @@
             // 
             label18.AutoSize = true;
             label18.Font = new Font("Microsoft YaHei UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label18.Location = new Point(1060, 11);
+            label18.Location = new Point(1066, 2);
             label18.Name = "label18";
             label18.Padding = new Padding(0, 3, 0, 3);
             label18.Size = new Size(280, 29);
@@ -867,7 +871,7 @@
             // 
             label14.AutoSize = true;
             label14.Font = new Font("Microsoft YaHei UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label14.Location = new Point(1402, 12);
+            label14.Location = new Point(1394, 3);
             label14.Name = "label14";
             label14.Padding = new Padding(0, 3, 0, 3);
             label14.Size = new Size(131, 29);
@@ -878,7 +882,7 @@
             // 
             DiskSpaceLabel.AutoSize = true;
             DiskSpaceLabel.Font = new Font("Microsoft YaHei UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            DiskSpaceLabel.Location = new Point(1539, 14);
+            DiskSpaceLabel.Location = new Point(1539, 2);
             DiskSpaceLabel.Name = "DiskSpaceLabel";
             DiskSpaceLabel.Padding = new Padding(0, 2, 0, 3);
             DiskSpaceLabel.Size = new Size(20, 28);
@@ -889,7 +893,7 @@
             // 
             label11.AutoSize = true;
             label11.Font = new Font("Microsoft YaHei UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label11.Location = new Point(556, 13);
+            label11.Location = new Point(555, 2);
             label11.Name = "label11";
             label11.Padding = new Padding(0, 3, 0, 3);
             label11.Size = new Size(80, 29);
@@ -900,7 +904,7 @@
             // 
             OpenedLabel.AutoSize = true;
             OpenedLabel.Font = new Font("Microsoft YaHei UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            OpenedLabel.Location = new Point(641, 14);
+            OpenedLabel.Location = new Point(641, 3);
             OpenedLabel.Name = "OpenedLabel";
             OpenedLabel.Padding = new Padding(0, 2, 0, 3);
             OpenedLabel.Size = new Size(20, 28);
@@ -911,7 +915,7 @@
             // 
             label12.AutoSize = true;
             label12.Font = new Font("Microsoft YaHei UI Light", 28.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label12.Location = new Point(514, -3);
+            label12.Location = new Point(514, -4);
             label12.Name = "label12";
             label12.Padding = new Padding(0, 2, 0, 3);
             label12.Size = new Size(36, 65);
@@ -922,7 +926,7 @@
             // 
             label13.AutoSize = true;
             label13.Font = new Font("Microsoft YaHei UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label13.Location = new Point(415, 12);
+            label13.Location = new Point(406, 2);
             label13.Name = "label13";
             label13.Padding = new Padding(0, 3, 0, 3);
             label13.Size = new Size(79, 29);
@@ -933,7 +937,7 @@
             // 
             DeletedLabel.AutoSize = true;
             DeletedLabel.Font = new Font("Microsoft YaHei UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            DeletedLabel.Location = new Point(500, 13);
+            DeletedLabel.Location = new Point(491, 3);
             DeletedLabel.Name = "DeletedLabel";
             DeletedLabel.Padding = new Padding(0, 2, 0, 3);
             DeletedLabel.Size = new Size(20, 28);
@@ -955,7 +959,7 @@
             // 
             label10.AutoSize = true;
             label10.Font = new Font("Microsoft YaHei UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label10.Location = new Point(274, 11);
+            label10.Location = new Point(272, 1);
             label10.Name = "label10";
             label10.Padding = new Padding(0, 3, 0, 3);
             label10.Size = new Size(77, 29);
@@ -966,7 +970,7 @@
             // 
             CreatedLabel.AutoSize = true;
             CreatedLabel.Font = new Font("Microsoft YaHei UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            CreatedLabel.Location = new Point(357, 13);
+            CreatedLabel.Location = new Point(358, 2);
             CreatedLabel.Name = "CreatedLabel";
             CreatedLabel.Padding = new Padding(0, 2, 0, 3);
             CreatedLabel.Size = new Size(20, 28);
@@ -988,7 +992,7 @@
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Microsoft YaHei UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label7.Location = new Point(41, 11);
+            label7.Location = new Point(41, 0);
             label7.Name = "label7";
             label7.Padding = new Padding(0, 3, 0, 3);
             label7.Size = new Size(157, 29);
@@ -999,7 +1003,7 @@
             // 
             OperationsCountLabel.AutoSize = true;
             OperationsCountLabel.Font = new Font("Microsoft YaHei UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            OperationsCountLabel.Location = new Point(204, 12);
+            OperationsCountLabel.Location = new Point(204, 2);
             OperationsCountLabel.Name = "OperationsCountLabel";
             OperationsCountLabel.Padding = new Padding(0, 2, 0, 3);
             OperationsCountLabel.Size = new Size(20, 28);
@@ -1011,7 +1015,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.GradientActiveCaption;
-            ClientSize = new Size(1562, 733);
+            ClientSize = new Size(1559, 720);
             Controls.Add(panel8);
             Controls.Add(Searchlabel);
             Controls.Add(textBox1);
@@ -1024,8 +1028,8 @@
             Controls.Add(BrowseButton);
             Controls.Add(PathLable);
             Controls.Add(PathBox);
-            MaximumSize = new Size(1580, 780);
-            MinimumSize = new Size(1580, 780);
+            MaximumSize = new Size(1577, 767);
+            MinimumSize = new Size(1577, 767);
             Name = "Form1";
             Text = "File Explorer";
             Load += Form1_Load;
