@@ -50,7 +50,6 @@ namespace OsProject
                 }
             };
         }
-
         private void ThisPCLabel_Click(object sender, EventArgs e)
         {
             CurrentFolderPath = ViewThisPC();
@@ -61,9 +60,10 @@ namespace OsProject
         {
             if (Directory.Exists(SelectedItemPath))
             {
+                string folderPath = SelectedItemPath;
                 LoadDirectory(SelectedItemPath);
                 UpdateStats("Open");
-                AddLog($"({new DirectoryInfo(SelectedItemPath).Name}) Opened", Color.Green);
+                AddLog($"({new DirectoryInfo(folderPath).Name}) Opened", Color.Green);
             }
             else if (File.Exists(SelectedItemPath))
             {
@@ -148,7 +148,7 @@ namespace OsProject
             
         }
 
-        #region My Mithods
+        #region  Abdulrhman Nofal's Mithods
         private void ItemInfo<T>(T item) where T : FileSystemInfo
         {
             FileNameLable.Text = item.Name;
