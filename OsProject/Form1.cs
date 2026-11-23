@@ -10,6 +10,7 @@ namespace OsProject
         {
             InitializeComponent();
         }
+        #region Abdulrhman Nofal's
         #region Public Vars
         string CurrentFolderPath = "";
         string SelectedItemPath = "";
@@ -21,6 +22,7 @@ namespace OsProject
         int threadCounter = 0;
         #endregion
 
+        #region App Mithods
         private void Form1_Load(object sender, EventArgs e)
         {
             CursorChange(sender, e);
@@ -50,7 +52,6 @@ namespace OsProject
                 }
             };
         }
-
         private void ThisPCLabel_Click(object sender, EventArgs e)
         {
             CurrentFolderPath = ViewThisPC();
@@ -65,23 +66,6 @@ namespace OsProject
                 LoadDirectory(SelectedItemPath);
                 UpdateStats("Open");
                 AddLog($"({new DirectoryInfo(folderPath).Name}) Opened", Color.Green);
-            }
-            else if (File.Exists(SelectedItemPath))
-            {
-                try
-                {
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
-                    {
-                        FileName = SelectedItemPath,
-                        UseShellExecute = true
-                    });
-                    AddLog($"({Path.GetFileName(SelectedItemPath)}) Opened", Color.Green);
-                    UpdateStats("Open");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error opening file: {ex.Message}");
-                }
             }
             else
             {
@@ -148,8 +132,9 @@ namespace OsProject
             }
 
         }
+        #endregion
 
-        #region Abdulrhman Nofal's Mithods
+        #region My Mithods
         private void ItemInfo<T>(T item) where T : FileSystemInfo
         {
             FileNameLable.Text = item.Name;
@@ -357,14 +342,13 @@ namespace OsProject
             }
         }
         #endregion
+        #endregion
 
         #region Elnaggar
         private void button6_Click(object sender, EventArgs e)
         {
             StartSearch();
         }
-
-
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -415,7 +399,6 @@ namespace OsProject
             // Run the search on a background thread
             RunInThread(() => SearchFiles(pathsToSearch, searchText));
         }
-
         private void SearchFiles(string[] pathsToSearch, string searchText)
         {
             try
@@ -494,9 +477,6 @@ namespace OsProject
                 AddLog($"Error searching ({searchText}): {ex.Message}", Color.Red);
             }
         }
-
-        
-
         // opens .txt files in Notepad, and any other file extension in its Windows default app
         private System.Diagnostics.Process? OpenWithApp(string filePath)
         {
@@ -513,9 +493,7 @@ namespace OsProject
                 UseShellExecute = true
             });
         }
-
         // read file
-
         private void button4_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(SelectedItemPath) || !File.Exists(SelectedItemPath))
@@ -563,7 +541,6 @@ namespace OsProject
                 }
             });
         }
-
         private bool ReadTextFile(string filePath)
         {
             string fileName = Path.GetFileName(filePath);
@@ -610,9 +587,7 @@ namespace OsProject
                 return false;
             }
         }
-
         // write file
-
         private void button7_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(SelectedItemPath) || !File.Exists(SelectedItemPath))
@@ -626,7 +601,6 @@ namespace OsProject
 
             RunInThread(() => WriteFileWithApp(filePath, fileName));
         }
-
         private void WriteFileWithApp(string filePath, string fileName)
         {
             bool isTxt = Path.GetExtension(filePath).Equals(".txt", StringComparison.OrdinalIgnoreCase);
@@ -671,7 +645,6 @@ namespace OsProject
                 AddLog($"Error editing ({fileName}): {ex.Message}", Color.Red);
             }
         }
-
         #endregion
 
     }
