@@ -413,7 +413,7 @@ namespace OsProject
                     MatchCasing = MatchCasing.CaseInsensitive
                 };
 
-                List<FileInfo> foundFiles = [];
+                List<FileSystemInfo> foundItems = [];
 
                 // Loop through each drive 
                 for (int i = 0; i < pathsToSearch.Length; i++)
@@ -424,7 +424,7 @@ namespace OsProject
                     try
                     {
                         DirectoryInfo dir = new(path);
-                        foundFiles.AddRange(dir.GetFiles($"*{searchText}*", options));
+                        foundItems.AddRange(dir.GetFileSystemInfos($"*{searchText}*", options));
                     }
                     catch (Exception)
                     {
@@ -436,14 +436,14 @@ namespace OsProject
                 }
 
                 // No matching files found anywhere
-                if (foundFiles.Count == 0)
+                if (foundItems.Count == 0)
                 {
-                    UpdateProgress("File not found", 0);
-                    AddLog($"({searchText}) File not found", Color.Red);
+                    UpdateProgress("File or folder not found", 0);
+                    AddLog($"({searchText}) Not found", Color.Red);
 
                     this.BeginInvoke(new Action(() =>
                     {
-                        MessageBox.Show("File not found.");
+                        MessageBox.Show("File or folder not found.");
                     }));
                     return;
                 }
@@ -454,21 +454,28 @@ namespace OsProject
                     dataGridView1.Rows.Clear();
                     SelectedItemPath = "";
 
-                    foreach (FileInfo file in foundFiles)
+                    foreach (FileSystemInfo item in foundItems)
                     {
-                        dataGridView1.Rows.Add(
-                            file.Name,
-                            "File",
-                            Math.Round(file.Length / 1024.0, 3) + " kB",
-                            file.LastWriteTime
-                        );
-                        // Store full path in Tag so clicking or opening the result works
-                        dataGridView1.Rows[^1].Tag = file.FullName;
+                        if (item is DirectoryInfo folder)
+                        {
+                            dataGridView1.Rows.Add(folder.Name, "Folder", "-", "-");
+                            dataGridView1.Rows[^1].Tag = folder.FullName;
+                        }
+                        else if (item is FileInfo file)
+                        {
+                            dataGridView1.Rows.Add(
+                                file.Name,
+                                "File",
+                                Math.Round(file.Length / 1024.0, 3) + " kB",
+                                file.LastWriteTime
+                            );
+                            dataGridView1.Rows[^1].Tag = file.FullName;
+                        }
                     }
                 }));
 
-                UpdateProgress($"Search completed ({foundFiles.Count} found)", 100);
-                AddLog($"Search ({searchText}): {foundFiles.Count} file(s) found", Color.Green);
+                UpdateProgress($"Search completed ({foundItems.Count} found)", 100);
+                AddLog($"Search ({searchText}): {foundItems.Count} item(s) found", Color.Green);
                 UpdateStats("Search");
             }
             catch (Exception ex)
@@ -650,27 +657,41 @@ namespace OsProject
         #region Abdulrahman Nossier
         private void getInfobtn_Click(object sender, EventArgs e)
         {
-            DriveInfo[] allDrives = DriveInfo.GetDrives();
-            string info = "";
-            foreach (DriveInfo drive in allDrives)
+            string targetPath = !string.IsNullOrEmpty(SelectedItemPath) ? SelectedItemPath : CurrentFolderPath;
+
+            if (string.IsNullOrEmpty(targetPath) || targetPath == "This PC")
             {
-                if (drive.IsReady)
-                {
-                    info += $"Drive Name: {drive.Name}\n" +
-                            $"File System: {drive.DriveFormat}\n" +
-                            $"Drive Type: {drive.DriveType}\n" +
-                            $"Total size of drive: {(drive.TotalSize / Math.Pow(1024, 3)):F2} GB\n" +
-                            $"Total available space: {(drive.TotalFreeSpace / Math.Pow(1024, 3)):F2} GB\n" +
-                            $"Total Used space: {((drive.TotalSize - drive.TotalFreeSpace) / Math.Pow(1024, 3)):F2} GB\n" +
-                            $"==================\n";
-                }
-                else
-                {
-                    info += $"Drive {drive.Name} is not ready.\n" +
-                        $"==================\n";
-                }
+                MessageBox.Show("Please select a drive first.");
+                return;
             }
-            AddLog("Drive info displayed", Color.Green);
+
+            string? root = Path.GetPathRoot(targetPath);
+            if (string.IsNullOrEmpty(root))
+            {
+                MessageBox.Show("Please select a valid drive.");
+                return;
+            }
+
+            DriveInfo drive = new(root);
+            string info = "";
+
+            if (drive.IsReady)
+            {
+                info = $"Drive Name: {drive.Name}\n" +
+                       $"File System: {drive.DriveFormat}\n" +
+                       $"Drive Type: {drive.DriveType}\n" +
+                       $"Total size of drive: {(drive.TotalSize / Math.Pow(1024, 3)):F2} GB\n" +
+                       $"Total available space: {(drive.TotalFreeSpace / Math.Pow(1024, 3)):F2} GB\n" +
+                       $"Total Used space: {((drive.TotalSize - drive.TotalFreeSpace) / Math.Pow(1024, 3)):F2} GB\n" +
+                       $"==================";
+            }
+            else
+            {
+                info = $"Drive {drive.Name} is not ready.\n" +
+                       $"==================";
+            }
+
+            AddLog($"Drive ({drive.Name}) info displayed", Color.Green);
             UpdateStats("DriveInfo");
             MessageBox.Show(info, "Drive Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
