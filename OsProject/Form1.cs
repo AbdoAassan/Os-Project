@@ -647,6 +647,109 @@ namespace OsProject
         }
         #endregion
 
+        #region Abdulrahman Nossier
+        private void getInfobtn_Click(object sender, EventArgs e)
+        {
+            DriveInfo[] allDrives = DriveInfo.GetDrives();
+            string info = "";
+            foreach (DriveInfo drive in allDrives)
+            {
+                if (drive.IsReady)
+                {
+                    info += $"Drive Name: {drive.Name}\n" +
+                            $"File System: {drive.DriveFormat}\n" +
+                            $"Drive Type: {drive.DriveType}\n" +
+                            $"Total size of drive: {(drive.TotalSize / Math.Pow(1024, 3)):F2} GB\n" +
+                            $"Total available space: {(drive.TotalFreeSpace / Math.Pow(1024, 3)):F2} GB\n" +
+                            $"Total Used space: {((drive.TotalSize - drive.TotalFreeSpace) / Math.Pow(1024, 3)):F2} GB\n" +
+                            $"==================\n";
+                }
+                else
+                {
+                    info += $"Drive {drive.Name} is not ready.\n" +
+                        $"==================\n";
+                }
+            }
+            AddLog("Drive info displayed", Color.Green);
+            UpdateStats("DriveInfo");
+            MessageBox.Show(info, "Drive Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void deletebtn_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(SelectedItemPath) ||
+                CurrentFolderPath == "This PC" ||
+                string.Equals(Path.GetPathRoot(SelectedItemPath), SelectedItemPath, StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show("Please select a file or folder to delete.");
+                return;
+            }
+            string targetPath = SelectedItemPath;
+            string itemName = Path.GetFileName(targetPath);
+            DialogResult result = MessageBox.Show(
+                $"Are you sure you want to delete '{itemName}'?",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                RunInThread(() => DeleteItem(targetPath));
+            }
+        }
+        private void DeleteItem(string targetPath)
+        {
+            string itemName = Path.GetFileName(targetPath);
+            try
+            {
+                UpdateProgress($"Deleting {itemName}...", 30);
+                if (File.Exists(targetPath))
+                {
+                    AddLog($"Deleting file: ({itemName})...", Color.Blue);
+                    File.Delete(targetPath);
+                    AddLog($"({itemName}) File deleted", Color.Green);
+                }
+                else if (Directory.Exists(targetPath))
+                {
+                    AddLog($"Deleting folder: ({itemName})...", Color.Blue);
+                    Directory.Delete(targetPath, true);
+                    AddLog($"({itemName}) Folder deleted", Color.Green);
+                }
+                else
+                {
+                    UpdateProgress("Delete failed", 0);
+                    AddLog($"Path does not exist: ({itemName})", Color.Red);
+                    return;
+                }
+                UpdateProgress($"Deleted ({itemName})", 100);
+                UpdateStats("Delete");
+                this.BeginInvoke(new Action(() =>
+                {
+                    if (CurrentFolderPath != "This PC" && Directory.Exists(CurrentFolderPath))
+                    {
+                        LoadDirectory(CurrentFolderPath);
+                    }
+                    FileNameLable.Text = "-";
+                    FilePathLable.Text = "-";
+                    ExtensionLable.Text = "-";
+                    SizeLable.Text = "-";
+                    CreatedLable.Text = "-";
+                    ModifiedLable.Text = "-";
+                }));
+            }
+            catch (Exception ex)
+            {
+                UpdateProgress("Delete failed", 0);
+                AddLog($"Delete failed ({itemName}): {ex.Message}", Color.Red);
+            }
+        }
+
+
+
+
+
+
+        #endregion
+
     }
 
 }
