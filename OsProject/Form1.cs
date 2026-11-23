@@ -771,6 +771,29 @@ namespace OsProject
 
         #endregion
 
-    }
+        #region Abdelrahman Hassan
 
+        private void button10_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+            "Delete all logs?",
+            "Confirm Clear",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+
+            if (result == DialogResult.Yes)
+            {
+                mutex.WaitOne();
+                try { LogBox.Clear(); }
+                finally { mutex.ReleaseMutex(); }
+            }
+
+
+
+
+
+        }
+    }
+    #endregion
 }
